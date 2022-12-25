@@ -1,0 +1,4 @@
+{
+	"service.ranking": 0,
+	"user.mapping": "com.epam.mentoring.aem.services:versioningservice=mentoring-service-user"
+}
