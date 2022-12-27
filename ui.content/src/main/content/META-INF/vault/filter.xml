@@ -5,4 +5,5 @@
     <filter root="/content/dam/mentoring/asset.jpg" mode="merge"/>
     <filter root="/content/experience-fragments/mentoring" mode="merge"/>
     <filter root="/var/workflow/models" mode="merge"/>
+    <filter root="/conf/global" mode="merge"/>
 </workspaceFilter>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="cq:Page">
+    <jcr:content
+        cq:designPath="/libs/settings/wcm/designs/default"
+        cq:lastModified="{Date}2022-12-27T15:54:10.603+02:00"
+        cq:lastModifiedBy="admin"
+        cq:template="/libs/cq/workflow/templates/model"
+        jcr:primaryType="cq:PageContent"
+        jcr:title="Custom Rendition Workflow"
+        sling:resourceType="cq/workflow/components/pages/model">
+        <flow
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="foundation/components/parsys">
+            <or
+                jcr:created="{Date}2022-12-25T15:38:44.680+02:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2022-12-25T15:51:33.997+02:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="cq/workflow/components/model/or"
+                branches="2"
+                branchName1="Branch 1"
+                branchName2="Branch 2"
+                branchOrder="[0,1]"
+                default2="true"
+                orSplit="true"
+                script2="function check(){&#xd;&#xa;var targetPath= &quot;/content/dam/mentoring&quot;;&#xd;&#xa;var path = workflowData.getPayload().toString();&#xd;&#xa;return path.startsWith(targetPath);&#xd;&#xa;}">
+                <_x0031_
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="cq/flow/components/parsys">
+                    <noopprocess
+                        jcr:created="{Date}2022-12-25T15:38:52.982+02:00"
+                        jcr:createdBy="admin"
+                        jcr:description="A no operation process"
+                        jcr:lastModified="{Date}2022-12-25T15:38:52.982+02:00"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="No Operation"
+                        sling:resourceType="cq/workflow/components/workflow/noopprocess">
+                        <metaData
+                            jcr:primaryType="nt:unstructured"
+                            PROCESS="/libs/workflow/scripts/noop.ecma"
+                            PROCESS_AUTO_ADVANCE="true"/>
+                    </noopprocess>
+                </_x0031_>
+                <_x0032_
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="cq/flow/components/parsys">
+                    <thumbnailprocess_cop
+                        jcr:created="{Date}2014-07-15T00:55:55.869+05:30"
+                        jcr:createdBy="admin"
+                        jcr:description="This process will create one or more thumbnails for the asset, create web enabled rendition and update folder thumbnail."
+                        jcr:lastModified="{Date}2022-12-25T15:41:17.578+02:00"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="Process Thumbnails"
+                        sling:resourceType="dam/components/workflow/thumbnailprocess">
+                        <metaData
+                            jcr:primaryType="nt:unstructured"
+                            CONFIGS="[140:100:false,48:48:false,319:319:false,829:929:false]"
+                            CREATE_FPO_MIMETYPES="[image/pjpeg,image/jpeg,image/jpg,image/gif,image/x-png,image/tiff,image/png,application/x-photoshop,application/photoshop,image/vnd.adobe.photoshop,application/vnd.adobe.photoshop,image/bmp,image/x-tiff]"
+                            FPO_QUALITY="10"
+                            HEIGHT="1280"
+                            MIME_TYPE="image/jpeg"
+                            MIMETYPE="image/jpeg"
+                            PROCESS="com.day.cq.dam.core.process.ThumbnailProcess"
+                            PROCESS_AUTO_ADVANCE="true"
+                            QUALITY="90"
+                            SKIP="[audio/mpeg,video/(.*)]"
+                            WIDTH="1280"/>
+                    </thumbnailprocess_cop>
+                </_x0032_>
+            </or>
+        </flow>
+    </jcr:content>
+</jcr:root>
