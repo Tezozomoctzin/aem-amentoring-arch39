@@ -1,6 +1,6 @@
 {
     "scripts": [
         "create service user mentoring-service-user",
-        "set ACL for mentoring-service-user\n   allow jcr:read,rep:write on /content/mentoring\nend"
+        "set ACL for mentoring-service-user\n   allow jcr:read,rep:write on /content/mentoring\n allow jcr:read,rep:write on /content/dam/mentoring\nend"
     ]
 }
