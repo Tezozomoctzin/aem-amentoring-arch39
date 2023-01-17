@@ -1,15 +1,16 @@
 package com.mentorting.aem.core.services;
 
-import com.day.cq.workflow.WorkflowException;
-import com.day.cq.workflow.WorkflowSession;
-import com.day.cq.workflow.exec.WorkItem;
-import com.day.cq.workflow.exec.WorkflowProcess;
-import com.day.cq.workflow.metadata.MetaDataMap;
-import org.apache.commons.lang.StringUtils;
-import org.apache.sling.api.resource.*;
+import com.adobe.granite.asset.api.Asset;
+import com.adobe.granite.workflow.WorkflowSession;
+import com.adobe.granite.workflow.exec.WorkItem;
+import com.adobe.granite.workflow.exec.WorkflowProcess;
+import com.adobe.granite.workflow.metadata.MetaDataMap;
+import org.apache.sling.api.resource.ModifiableValueMap;
+import org.apache.sling.api.resource.PersistenceException;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,41 +24,47 @@ import org.slf4j.LoggerFactory;
 public class RetouchedWorkflowProcess implements WorkflowProcess {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-
-    @Reference
-    private ResourceResolverFactory resourceResolverFactory;
     public static final String RETOUCHED = "retouched";
     public static final String JPEG_FORMAT = "image/jpeg";
 
     @Override
-    public void execute(WorkItem workItem, WorkflowSession workflowSession, MetaDataMap metaDataMap) throws WorkflowException {
-        ResourceResolver resourceResolver = null;
-        try {
-            resourceResolver = ResourceResolverUtility.getResourceResolver(resourceResolverFactory);
+    public void execute(WorkItem workItem, WorkflowSession workflowSession, MetaDataMap metaDataMap){
+        try(ResourceResolver resourceResolver = workflowSession.adaptTo(ResourceResolver.class)) {
+            if(resourceResolver == null){
+                logger.error("Resource Resolver is null");
+                return;
+            }
             String payload = workItem.getWorkflowData().getPayload().toString();
-            Resource resource = resourceResolver.getResource(payload + "/jcr:content/metadata");
-            if(resource == null){
+            String baseAssetPath = payload.split("/renditions")[0];
+            Resource assetResource = resourceResolver.getResource(baseAssetPath);
+            if(assetResource == null){
                 logger.error("Resource is null");
                 return;
             }
-            ModifiableValueMap resourceMetadata = resource.adaptTo(ModifiableValueMap.class);
-            if(resourceMetadata == null){
-                logger.error("Resource Metadata is null");
+            Asset asset = assetResource.adaptTo(Asset.class);
+            if(asset == null){
+                logger.error("Asset is null");
                 return;
             }
-            String format = resourceMetadata.get("dc:format", String.class);
-            if(JPEG_FORMAT.equals(format)) {
-                System.out.println("Setting retouched metadata to true");
-                resourceMetadata.put(RETOUCHED, "no");
-                resourceResolver.commit();
+            Resource metadataResource = assetResource.getChild("jcr:content/metadata");
+            if(metadataResource == null){
+                logger.error("Metadata Resource is null");
+                return;
             }
-        } catch (LoginException | PersistenceException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (resourceResolver != null && resourceResolver.isLive()) {
-                resourceResolver.close();
+            ModifiableValueMap assetMetadata = metadataResource.adaptTo(ModifiableValueMap.class);
+            if(assetMetadata == null){
+                logger.error("Asset Metadata is null");
+                return;
             }
+            String assetFormat = assetMetadata.get("dc:format", String.class);
+            if(assetFormat == null || !assetFormat.equals(JPEG_FORMAT)){
+                logger.error("Asset Format is of a wrong type");
+                return;
+            }
+            assetMetadata.put(RETOUCHED, "no");
+            resourceResolver.commit();
+        } catch (PersistenceException e) {
+            logger.error("Persistence Exception", e);
         }
-
     }
 }
