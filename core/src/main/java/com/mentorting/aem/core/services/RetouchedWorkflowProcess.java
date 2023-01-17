@@ -61,7 +61,7 @@ public class RetouchedWorkflowProcess implements WorkflowProcess {
                 logger.error("Asset Format is of a wrong type");
                 return;
             }
-            assetMetadata.put(RETOUCHED, true);
+            assetMetadata.put(RETOUCHED, "no");
             resourceResolver.commit();
         } catch (PersistenceException e) {
             logger.error("Persistence Exception", e);
