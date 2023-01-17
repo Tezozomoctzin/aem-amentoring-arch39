@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspaceFilter version="1.0">
-    <filter root="/conf/mentoring" mode="merge"/>
-    <filter root="/content/mentoring" mode="merge"/>
-    <filter root="/content/dam/mentoring/asset.jpg" mode="merge"/>
-    <filter root="/content/experience-fragments/mentoring" mode="merge"/>
+    <filter root="/conf/mentoring" mode="merge_properties"/>
+    <filter root="/content/mentoring" mode="merge_properties"/>
+    <filter root="/content/dam/mentoring/asset.jpg" mode="merge_properties"/>
+    <filter root="/content/experience-fragments/mentoring" mode="merge_properties"/>
 </workspaceFilter>
