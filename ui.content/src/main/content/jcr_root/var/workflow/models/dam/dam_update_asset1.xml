@@ -5,7 +5,7 @@
     jcr:uuid="87cc8f92-aa36-4a74-8a78-6c60ad9af73e"
     sling:resourceType="cq/workflow/components/model"
     description="This workflow manages the update of assets"
-    title="DAM Update Asset1">
+    title="DAM Update Asset(mentoring)">
     <metaData
         cq:generatingPage="/conf/global/settings/workflow/models/dam/dam_update_asset1/jcr:content"
         cq:lastModified="{Long}1672249992987"

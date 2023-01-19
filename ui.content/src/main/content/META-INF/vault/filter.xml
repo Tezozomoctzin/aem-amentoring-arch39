@@ -3,6 +3,7 @@
     <filter root="/conf/mentoring" mode="update"/>
     <filter root="/conf/global" mode="update"/>
     <filter root="/content/mentoring" mode="update"/>
+    <filter root="/content/dam/mentoring" mode="update"/>
     <filter root="/content/dam/mentoring/asset.jpg" mode="update"/>
     <filter root="/content/experience-fragments/mentoring" mode="update"/>
     <filter root="/var/workflow" mode="update"/>

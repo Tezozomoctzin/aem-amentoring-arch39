@@ -3,7 +3,7 @@
     jcr:primaryType="cq:WorkflowLauncher"
     condition=""
     conditions="[]"
-    description=""
+    description="Copy of default DAM Update Asset workflow with custom rendition and metadata steps"
     disabledFeatures="[]"
     enabled="{Boolean}true"
     eventType="{Long}1"
@@ -12,4 +12,4 @@
     glob="/content/dam/mentoring"
     nodetype="dam:Asset"
     runModes="author"
-    workflow="/var/workflow/models/custom-rendition-workflow"/>
+    workflow="/var/workflow/models/dam/dam_update_asset1"/>

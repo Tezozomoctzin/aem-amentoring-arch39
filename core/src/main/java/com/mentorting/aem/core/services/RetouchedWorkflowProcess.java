@@ -1,6 +1,6 @@
 package com.mentorting.aem.core.services;
 
-import com.adobe.granite.asset.api.Asset;
+import com.adobe.granite.workflow.WorkflowException;
 import com.adobe.granite.workflow.WorkflowSession;
 import com.adobe.granite.workflow.exec.WorkItem;
 import com.adobe.granite.workflow.exec.WorkflowProcess;
@@ -14,6 +14,8 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Optional;
+
 @Component(
         service = WorkflowProcess.class,
         property = {
@@ -24,47 +26,37 @@ import org.slf4j.LoggerFactory;
 public class RetouchedWorkflowProcess implements WorkflowProcess {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    public static final String RETOUCHED = "retouched";
+    public static final String RETOUCHED_PROPERTY_NAME = "retouched";
+    public static final String FORMAT_PROPERTY_NAME = "dc:format";
     public static final String JPEG_FORMAT = "image/jpeg";
 
     @Override
-    public void execute(WorkItem workItem, WorkflowSession workflowSession, MetaDataMap metaDataMap){
-        try(ResourceResolver resourceResolver = workflowSession.adaptTo(ResourceResolver.class)) {
-            if(resourceResolver == null){
-                logger.error("Resource Resolver is null");
-                return;
-            }
+    public void execute(WorkItem workItem, WorkflowSession workflowSession, MetaDataMap metaDataMap) throws WorkflowException {
+        try(ResourceResolver resourceResolver =
+                    Optional
+                            .ofNullable(workflowSession.adaptTo(ResourceResolver.class))
+                            .orElseThrow(() -> new WorkflowException("Resource Resolver is null"))) {
             String payload = workItem.getWorkflowData().getPayload().toString();
             String baseAssetPath = payload.split("/renditions")[0];
-            Resource assetResource = resourceResolver.getResource(baseAssetPath);
-            if(assetResource == null){
-                logger.error("Resource is null");
-                return;
-            }
-            Asset asset = assetResource.adaptTo(Asset.class);
-            if(asset == null){
-                logger.error("Asset is null");
-                return;
-            }
-            Resource metadataResource = assetResource.getChild("jcr:content/metadata");
-            if(metadataResource == null){
-                logger.error("Metadata Resource is null");
-                return;
-            }
-            ModifiableValueMap assetMetadata = metadataResource.adaptTo(ModifiableValueMap.class);
-            if(assetMetadata == null){
-                logger.error("Asset Metadata is null");
-                return;
-            }
-            String assetFormat = assetMetadata.get("dc:format", String.class);
+            Resource assetResource = Optional.ofNullable(resourceResolver.getResource(baseAssetPath))
+                    .orElseThrow(() -> new WorkflowException("Asset not found"));
+
+            Resource metadataResource = Optional.ofNullable(assetResource.getChild("jcr:content/metadata"))
+                    .orElseThrow(() -> new WorkflowException("Metadata not found"));
+
+            ModifiableValueMap assetMetadata = Optional.ofNullable(metadataResource.adaptTo(ModifiableValueMap.class))
+                    .orElseThrow(() -> new WorkflowException("Metadata not found"));
+
+            String assetFormat = assetMetadata.getOrDefault(FORMAT_PROPERTY_NAME, null).toString();
             if(assetFormat == null || !assetFormat.equals(JPEG_FORMAT)){
                 logger.error("Asset Format is of a wrong type");
                 return;
             }
-            assetMetadata.put(RETOUCHED, "no");
+            assetMetadata.put(RETOUCHED_PROPERTY_NAME, "no");
             resourceResolver.commit();
         } catch (PersistenceException e) {
-            logger.error("Persistence Exception", e);
+            logger.error("Error while committing the changes", e);
+            throw new WorkflowException("Error while committing the changes", e);
         }
     }
 }
