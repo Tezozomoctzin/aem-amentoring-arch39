@@ -49,7 +49,6 @@ public class RetouchedWorkflowProcess implements WorkflowProcess {
 
             String assetFormat = assetMetadata.getOrDefault(FORMAT_PROPERTY_NAME, null).toString();
             if(assetFormat == null || !assetFormat.equals(JPEG_FORMAT)){
-                logger.error("Asset Format is of a wrong type");
                 return;
             }
             assetMetadata.put(RETOUCHED_PROPERTY_NAME, "no");
