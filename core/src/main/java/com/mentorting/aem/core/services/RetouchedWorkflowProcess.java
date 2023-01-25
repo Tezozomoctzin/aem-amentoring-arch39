@@ -32,30 +32,19 @@ public class RetouchedWorkflowProcess implements WorkflowProcess {
 
     @Override
     public void execute(WorkItem workItem, WorkflowSession workflowSession, MetaDataMap metaDataMap) throws WorkflowException {
-        try(ResourceResolver resourceResolver =
-                    Optional
-                            .ofNullable(workflowSession.adaptTo(ResourceResolver.class))
-                            .orElseThrow(() -> new WorkflowException("Resource Resolver is null"))) {
-            String payload = workItem.getWorkflowData().getPayload().toString();
-            String baseAssetPath = payload.split("/renditions")[0];
-            Resource assetResource = Optional.ofNullable(resourceResolver.getResource(baseAssetPath))
-                    .orElseThrow(() -> new WorkflowException("Asset not found"));
+        String payload = workItem.getWorkflowData().getPayload().toString();
+        String baseAssetPath = payload.split("/renditions")[0];
 
-            Resource metadataResource = Optional.ofNullable(assetResource.getChild("jcr:content/metadata"))
-                    .orElseThrow(() -> new WorkflowException("Metadata not found"));
-
-            ModifiableValueMap assetMetadata = Optional.ofNullable(metadataResource.adaptTo(ModifiableValueMap.class))
-                    .orElseThrow(() -> new WorkflowException("Metadata not found"));
-
-            String assetFormat = assetMetadata.getOrDefault(FORMAT_PROPERTY_NAME, null).toString();
-            if(assetFormat == null || !assetFormat.equals(JPEG_FORMAT)){
-                return;
-            }
-            assetMetadata.put(RETOUCHED_PROPERTY_NAME, "no");
-            resourceResolver.commit();
-        } catch (PersistenceException e) {
-            logger.error("Error while committing the changes", e);
-            throw new WorkflowException("Error while committing the changes", e);
+        ModifiableValueMap assetMetadata = Optional
+                .ofNullable(workflowSession.adaptTo(ResourceResolver.class))
+                .map(resolver -> resolver
+                        .getResource(baseAssetPath + "/jcr:content/metadata"))
+                .map(resource -> resource.adaptTo(ModifiableValueMap.class))
+                .orElseThrow(() -> new WorkflowException("Metadata not found"));
+        String assetFormat = assetMetadata.getOrDefault(FORMAT_PROPERTY_NAME, null).toString();
+        if (assetFormat == null || !assetFormat.equals(JPEG_FORMAT)) {
+            return;
         }
+        assetMetadata.put(RETOUCHED_PROPERTY_NAME, "no");
     }
 }
