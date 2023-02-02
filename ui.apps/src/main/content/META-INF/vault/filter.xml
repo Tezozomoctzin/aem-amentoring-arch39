@@ -3,4 +3,6 @@
     <filter root="/apps/mentoring/clientlibs"/>
     <filter root="/apps/mentoring/components"/>
     <filter root="/apps/mentoring/i18n"/>
+    <filter root="/apps/mentoring/workflow" mode="update"/>
+    <filter root="/apps/workflow" mode="update"/>
 </workspaceFilter>
