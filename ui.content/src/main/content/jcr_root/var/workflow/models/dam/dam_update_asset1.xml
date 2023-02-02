@@ -5,10 +5,10 @@
     jcr:uuid="87cc8f92-aa36-4a74-8a78-6c60ad9af73e"
     sling:resourceType="cq/workflow/components/model"
     description="This workflow manages the update of assets"
-    title="DAM Update Asset(mentoring)">
+    title="Mentoring - DAM Update Asset">
     <metaData
         cq:generatingPage="/conf/global/settings/workflow/models/dam/dam_update_asset1/jcr:content"
-        cq:lastModified="{Long}1672249992987"
+        cq:lastModified="{Long}1675337411145"
         cq:lastModifiedBy="admin"
         jcr:primaryType="nt:unstructured"
         tags="dam,wcm"
@@ -217,14 +217,44 @@
         </node15>
         <node16
             jcr:primaryType="cq:WorkflowNode"
-            title="Process"
+            title="OR_SPLIT"
+            type="OR_SPLIT">
+            <metaData jcr:primaryType="nt:unstructured"/>
+        </node16>
+        <node17
+            jcr:primaryType="cq:WorkflowNode"
+            title="OR_JOIN"
+            type="OR_JOIN">
+            <metaData jcr:primaryType="nt:unstructured"/>
+        </node17>
+        <node18
+            jcr:primaryType="cq:WorkflowNode"
+            title="Set Default JPEG metadata"
             type="PROCESS">
             <metaData
                 jcr:primaryType="nt:unstructured"
-                PROCESS="com.mentorting.aem.core.services.RetouchedWorkflowProcess"
+                PROCESS="com.mentorting.aem.core.services.RetouchedWorkflowProcess"/>
+        </node18>
+        <node19
+            jcr:primaryType="cq:WorkflowNode"
+            description="A participant step that is using a dialog for completion."
+            title="Mentoring - Admin interraction step"
+            type="PARTICIPANT">
+            <metaData
+                jcr:primaryType="nt:unstructured"
+                DIALOG_PATH="/apps/mentoring/workflow/dialogs/retouched-data/cq:dialog"
+                PARTICIPANT="administrators"/>
+        </node19>
+        <node20
+            jcr:primaryType="cq:WorkflowNode"
+            title="Mentoring - Apply Admin Input"
+            type="PROCESS">
+            <metaData
+                jcr:primaryType="nt:unstructured"
+                PROCESS="/apps/workflow/scripts/image-metadata-input-set.ecma"
                 PROCESS_AUTO_ADVANCE="true"/>
-        </node16>
-        <node17
+        </node20>
+        <node21
             jcr:primaryType="cq:WorkflowNode"
             description="This process will send DamEvent.Type.DAM_UPDATE_ASSET_WORKFLOW_COMPLETED event when DAM update asset workflow is completed"
             title="DAM Update Asset Workflow Completed"
@@ -233,8 +263,8 @@
                 jcr:primaryType="nt:unstructured"
                 PROCESS="com.day.cq.dam.core.impl.process.DamUpdateAssetWorkflowCompletedProcess"
                 PROCESS_AUTO_ADVANCE="true"/>
-        </node17>
-        <node18
+        </node21>
+        <node22
             jcr:primaryType="cq:WorkflowNode"
             description="This process will send email based on an email template to current user when a transient workflow is completed"
             title="Send Transient Workflow Completed Email"
@@ -244,13 +274,13 @@
                 PROCESS="com.day.cq.dam.core.impl.process.SendTransientWorkflowCompletedEmailProcess"
                 PROCESS_AUTO_ADVANCE="true"
                 templatePath="dam/workflow/notification/email/transientworkflowcompleted/en.txt"/>
-        </node18>
-        <node19
+        </node22>
+        <node23
             jcr:primaryType="cq:WorkflowNode"
             title="End"
             type="END">
             <metaData jcr:primaryType="nt:unstructured"/>
-        </node19>
+        </node23>
     </nodes>
     <transitions jcr:primaryType="nt:unstructured">
         <node0_x0023_node1
@@ -361,29 +391,65 @@
         <node15_x0023_node16
             jcr:primaryType="cq:WorkflowTransition"
             from="node15"
-            rule=""
             to="node16">
             <metaData jcr:primaryType="nt:unstructured"/>
         </node15_x0023_node16>
-        <node16_x0023_node17
+        <node16_x0023_node18
+            jcr:primaryType="cq:WorkflowTransition"
+            from="node16"
+            rule="/apps/workflow/scripts/image-type-check.ecma"
+            to="node18">
+            <metaData
+                jcr:primaryType="nt:unstructured"
+                isDefault="false"/>
+        </node16_x0023_node18>
+        <node18_x0023_node17
+            jcr:primaryType="cq:WorkflowTransition"
+            from="node18"
+            to="node17">
+            <metaData jcr:primaryType="nt:unstructured"/>
+        </node18_x0023_node17>
+        <node16_x0023_node19
             jcr:primaryType="cq:WorkflowTransition"
             from="node16"
             rule=""
+            to="node19">
+            <metaData
+                jcr:primaryType="nt:unstructured"
+                isDefault="false"/>
+        </node16_x0023_node19>
+        <node19_x0023_node20
+            jcr:primaryType="cq:WorkflowTransition"
+            from="node19"
+            rule=""
+            to="node20">
+            <metaData jcr:primaryType="nt:unstructured"/>
+        </node19_x0023_node20>
+        <node20_x0023_node17
+            jcr:primaryType="cq:WorkflowTransition"
+            from="node20"
             to="node17">
             <metaData jcr:primaryType="nt:unstructured"/>
-        </node16_x0023_node17>
-        <node17_x0023_node18
+        </node20_x0023_node17>
+        <node17_x0023_node21
             jcr:primaryType="cq:WorkflowTransition"
             from="node17"
             rule=""
-            to="node18">
+            to="node21">
             <metaData jcr:primaryType="nt:unstructured"/>
-        </node17_x0023_node18>
-        <node18_x0023_node19
+        </node17_x0023_node21>
+        <node21_x0023_node22
             jcr:primaryType="cq:WorkflowTransition"
-            from="node18"
-            to="node19">
+            from="node21"
+            rule=""
+            to="node22">
             <metaData jcr:primaryType="nt:unstructured"/>
-        </node18_x0023_node19>
+        </node21_x0023_node22>
+        <node22_x0023_node23
+            jcr:primaryType="cq:WorkflowTransition"
+            from="node22"
+            to="node23">
+            <metaData jcr:primaryType="nt:unstructured"/>
+        </node22_x0023_node23>
     </transitions>
 </jcr:root>

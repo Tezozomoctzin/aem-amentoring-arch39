@@ -1,0 +1,7 @@
+
+function check(){
+    let path = workflowData.getPayload().toString();
+    let assetMetadata = resolver.getResource(path + '/jcr:content/metadata').adaptTo(org.apache.sling.api.resource.ValueMap);
+    let assetType = assetMetadata.get('dc:format');
+    return assetType.endsWith('jpeg');
+}

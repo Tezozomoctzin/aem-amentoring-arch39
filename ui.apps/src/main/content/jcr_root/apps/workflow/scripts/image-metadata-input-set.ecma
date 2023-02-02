@@ -1,0 +1,7 @@
+
+function check(){
+    let rr = workflowSession.adaptTo(org.apache.sling.api.resource.ResourceResolver);
+    let path = workItem.getWorkflowData().getPayload().toString();
+    let assetMetadata = rr.getResource(path + '/jcr:content/metadata').adaptTo(org.apache.sling.api.resource.ModifiableValueMap);
+    assetMetadata.put('retouched', metaData.get('format'));
+}
