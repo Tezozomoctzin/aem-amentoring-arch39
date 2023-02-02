@@ -19,7 +19,7 @@
                         jcr:primaryType="nt:unstructured"
                         sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                         fieldLabel="Is Image Retouched"
-                        name="./jcr:content/retouched"/>
+                        name="retouched"/>
                 </items>
             </column>
         </items>
